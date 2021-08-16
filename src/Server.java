@@ -2,9 +2,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -22,19 +20,20 @@ public class Server {
 
     public Server(){
         try {
-            server = new ServerSocket(Properties.port);
-            System.out.println("Server address: " + InetAddress.getLocalHost().toString());
+            server = new ServerSocket();
+            server.bind(new InetSocketAddress("localhost", Properties.port));
+            System.out.println("Server address: " + server.getLocalSocketAddress().toString());
 
-            while (server.isClosed()){
+            while (true){
             Socket socket = server.accept();
-
             Connection connection = new Connection(socket);
             connections.add(connection);
             connection.start();
+            System.out.println("User connected");
             }
 
         }catch (IOException ex){
-            System.out.println("Creating port error");
+            System.out.println("Creating server error");
         }finally {
             closeAll();
         }
@@ -56,7 +55,7 @@ public class Server {
                 out = new PrintWriter(socket.getOutputStream(), true);
 
             }catch (IOException ex){
-                System.out.println("Something went wrong!");
+                System.out.println("Creating reader and writer error");
             }
         }
 
@@ -64,7 +63,8 @@ public class Server {
         public void run(){
             try {
                 String name = in.readLine();
-
+                Additional additional = new Additional();
+                additional.WriteToFile(name + " connected");
                 synchronized (connections){
                     for (Connection connection : connections) {
                         connection.out.println(name + " connected");
@@ -74,6 +74,7 @@ public class Server {
                 String message;
                 while (true) {
                     message = in.readLine();
+                    additional.WriteToFile(name + ": " + message);
                     if (!message.equalsIgnoreCase("exit")) break;
                     synchronized (connections) {
                         for (Connection connection : connections) {
@@ -82,6 +83,7 @@ public class Server {
                     }
                 }
 
+                additional.WriteToFile(name + " has left");
                 synchronized (connections){
                     synchronized (connections){
                         for (Connection connection : connections) {
@@ -89,9 +91,9 @@ public class Server {
                         }
                     }
                 }
-
+                additional.close();
             }catch (IOException ex){
-                System.out.println("Something went wrong!");
+                System.out.println("Receiving or sending message error");
             }finally {
                 close();
             }
@@ -107,7 +109,7 @@ public class Server {
                 socket.close();
                 connections.remove(this);
             }catch (IOException ex){
-                System.out.println("Something went wrong!");
+                System.out.println("Closing error");
             }
         }
     }
@@ -125,7 +127,7 @@ public class Server {
                 }
             }
         }catch (IOException ex){
-            System.out.println("Something went wrong!");
+            System.out.println("Server closing error");
         }
     }
 }

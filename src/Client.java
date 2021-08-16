@@ -50,7 +50,7 @@ public class Client {
             serverMessages.setStop();
 
         }catch (Exception ex){
-            System.out.println("Something went wrong!");
+            System.out.println("Sending message error");
         }finally {
             close();
         }
@@ -68,7 +68,7 @@ public class Client {
             socket.close();
             scan.close();
         }catch (Exception ex){
-            System.out.println("Something went wrong!");
+            System.out.println("Closing error");
         }
     }
 

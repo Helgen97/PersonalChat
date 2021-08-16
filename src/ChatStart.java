@@ -4,8 +4,9 @@ import java.util.Scanner;
  * Отсюда запускаеться чат.
  * Чат создан на основе статьи
  * @source www.quizful.net/post/base_network_in_java
- * @version 1.0
- * @versionDescription базовая основа со статьи
+ * @version 1.1
+ * @versionDescription Немного уточнил по ошибкам, сделал запись истории чата в файл
+ * + несущественные доработки
  * @author Helgen97
  */
 public class ChatStart {
