@@ -20,9 +20,8 @@ public class Server {
 
     public Server(){
         try {
-            server = new ServerSocket();
-            server.bind(new InetSocketAddress("localhost", Properties.port));
-            System.out.println("Server address: " + server.getLocalSocketAddress().toString());
+            server = new ServerSocket(Properties.port);
+            System.out.println("Server address: " + server.getLocalSocketAddress());
 
             while (true){
             Socket socket = server.accept();
@@ -34,6 +33,7 @@ public class Server {
 
         }catch (IOException ex){
             System.out.println("Creating server error");
+            ex.printStackTrace();
         }finally {
             closeAll();
         }
@@ -63,8 +63,10 @@ public class Server {
         public void run(){
             try {
                 String name = in.readLine();
+
                 Additional additional = new Additional();
                 additional.WriteToFile(name + " connected");
+
                 synchronized (connections){
                     for (Connection connection : connections) {
                         connection.out.println(name + " connected");
@@ -75,7 +77,8 @@ public class Server {
                 while (true) {
                     message = in.readLine();
                     additional.WriteToFile(name + ": " + message);
-                    if (!message.equalsIgnoreCase("exit")) break;
+                    if (message.equalsIgnoreCase("exit")) break;
+
                     synchronized (connections) {
                         for (Connection connection : connections) {
                             connection.out.println(name + ": " + message);
@@ -84,13 +87,11 @@ public class Server {
                 }
 
                 additional.WriteToFile(name + " has left");
-                synchronized (connections){
                     synchronized (connections){
                         for (Connection connection : connections) {
                             connection.out.println(name + " has left");
                         }
                     }
-                }
                 additional.close();
             }catch (IOException ex){
                 System.out.println("Receiving or sending message error");
@@ -129,5 +130,9 @@ public class Server {
         }catch (IOException ex){
             System.out.println("Server closing error");
         }
+    }
+
+    public static void main(String[] args) {
+        Server server = new Server();
     }
 }

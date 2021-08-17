@@ -25,7 +25,7 @@ public class Client {
         String IP = scan.nextLine();
 
         try {
-        socket = new Socket(IP, Properties.port);
+            socket = new Socket(IP, Properties.port);
         } catch (IOException ex){
             System.out.println("Connection error. Wrong address!");
         }
@@ -95,5 +95,9 @@ public class Client {
                 System.out.println("Receiving message error!");
             }
         }
+    }
+
+    public static void main(String[] args) {
+        Client client = new Client();
     }
 }
