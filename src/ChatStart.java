@@ -1,35 +1,72 @@
-import java.util.Scanner;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
- * Отсюда запускаеться чат.
- * Чат создан на основе статьи
- * @source www.quizful.net/post/base_network_in_java
- * @version 1.1
- * @versionDescription Немного уточнил по ошибкам, сделал запись истории чата в файл
- * + несущественные доработки
- * @author Helgen97
+ * Класс отвечает за начало работы с чатом
+ * Присутствует выбор как начать работать с чатом,
+ * в виде сервера или пользователя
  */
 public class ChatStart {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Welcome!");
-        System.out.println("Choose start option: ");
-        System.out.println("1.(S)erver");
-        System.out.println("2.(C)lient");
-        System.out.println("3.(E)xit");
-        while (true){
-            String choice = scanner.nextLine();
-            if(choice.charAt(0) == 'S'){
-                new Server();
-                break;
-            }else if(choice.charAt(0) == 'C'){
-                new Client();
-                break;
-            }else if(choice.charAt(0) == 'E'){
-                System.exit(0);
-            }else  {
-                System.out.println("Wrong input! Try again!");
+    private JFrame window;
+    private JPanel panel;
+    private JLabel text1;
+    private JLabel text2;
+    private JButton button1;
+    private JButton button2;
+
+    public ChatStart() {
+        window = new JFrame("Chat");
+        window.setSize(300, 200);
+        window.setLocationRelativeTo(null);
+        window.setLayout(null);
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        panel = new JPanel();
+        window.add(panel);
+
+        text1 = new JLabel("Welcome!");
+        panel.add(text1);
+        text1.setBounds(115, 25, 150, 50);
+
+        text2 = new JLabel("Choose option you need.");
+        panel.add(text2, BorderLayout.SOUTH);
+        text2.setBounds(70, 50, 200, 50);
+
+        button1 = new JButton("Server");
+        panel.add(button1);
+        button1.setBounds(0, 120, 150, 50);
+        button1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                window.dispose();
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Server server = new Server();
+                    }
+                });
+                thread.start();
+
             }
-        }
+        });
+
+        button2 = new JButton("Client");
+        panel.add(button2);
+        button2.setBounds(150, 120, 150, 50);
+        button2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                window.dispose();
+                new IPGui();
+            }
+        });
+
+        panel.setSize(300, 200);
+        panel.setLayout(null);
+        panel.setVisible(true);
+        window.setVisible(true);
     }
 }
+
